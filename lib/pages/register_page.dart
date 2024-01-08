@@ -1,5 +1,10 @@
-import 'package:flutter/material.dart';
+import 'dart:developer';
 
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../helpers/show_alert.dart';
+import '../services/auth_service.dart';
 import '../widgets/custom_input.dart';
 import '../widgets/login/labels.dart';
 import '../widgets/login/logo.dart';
@@ -49,10 +54,13 @@ class _Form extends StatefulWidget {
 }
 
 class __FormState extends State<_Form> {
+  final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final AuthService authService = Provider.of<AuthService>(context);
+
     return Container(
       margin: const EdgeInsets.only(top: 36),
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -61,8 +69,8 @@ class __FormState extends State<_Form> {
           CustomInput(
             icon: Icons.person_outline,
             placeholder: 'Nombre',
-            keyboardType: TextInputType.emailAddress,
-            textController: emailController,
+            keyboardType: TextInputType.text,
+            textController: nameController,
           ),
           CustomInput(
             icon: Icons.mail_outline,
@@ -77,10 +85,28 @@ class __FormState extends State<_Form> {
             isPassword: true,
           ),
           ElevatedButton(
-              onPressed: () {
-                print(emailController.text);
-                print(passwordController.text);
-              },
+              onPressed: authService.isAuthenticating
+                  ? null
+                  : () async {
+                      FocusScope.of(context).unfocus();
+                      final isRegisterOk = await authService.signup(
+                        nameController.text.trim(),
+                        emailController.text.trim(),
+                        passwordController.text.trim(),
+                      );
+
+                      if (isRegisterOk.containsKey(true)) {
+                        Navigator.pushReplacementNamed(context, 'users');
+                      } else {
+                        final List errorList = [];
+                        for (var errorKey in isRegisterOk['errors'].keys) {
+                          errorList
+                              .add(isRegisterOk['errors'][errorKey]['msg']);
+                        }
+                        showAlert(
+                            context, 'Signup failed', errorList.toString());
+                      }
+                    },
               child: const Text("Registrarme"))
         ],
       ),

@@ -76,10 +76,14 @@ class __FormState extends State<_Form> {
 
                       final isLoginOK =
                           await authService.login(email, password);
-                      if (isLoginOK) {
-                        // Nav
+
+                          
+                      if (isLoginOK.containsValue(true)) {
+                        // TODO conectar a socket server
+                        Navigator.pushReplacementNamed(context, 'users');
                       } else {
-                        showAlert(context, 'Login failed', 'Wrong credentials');
+                        showAlert(
+                            context, 'Login failed', isLoginOK["message"]);
                       }
                     },
               child: const Text("Iniciar sesión"))
