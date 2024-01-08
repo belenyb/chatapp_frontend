@@ -1,5 +1,8 @@
+import 'package:chat_app/helpers/show_alert.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../services/auth_service.dart';
 import '../widgets/custom_input.dart';
 import '../widgets/login/labels.dart';
 import '../widgets/login/logo.dart';
@@ -44,6 +47,7 @@ class __FormState extends State<_Form> {
   final passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final AuthService authService = Provider.of<AuthService>(context);
     return Container(
       margin: const EdgeInsets.only(top: 36),
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -62,10 +66,22 @@ class __FormState extends State<_Form> {
             isPassword: true,
           ),
           ElevatedButton(
-              onPressed: () {
-                print(emailController.text);
-                print(passwordController.text);
-              },
+              onPressed: authService.isAuthenticating
+                  ? null
+                  : () async {
+                      FocusScope.of(context).unfocus();
+
+                      final String email = emailController.text.trim();
+                      final String password = passwordController.text.trim();
+
+                      final isLoginOK =
+                          await authService.login(email, password);
+                      if (isLoginOK) {
+                        // Nav
+                      } else {
+                        showAlert(context, 'Login failed', 'Wrong credentials');
+                      }
+                    },
               child: const Text("Iniciar sesión"))
         ],
       ),
