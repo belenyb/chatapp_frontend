@@ -66,6 +66,33 @@ class AuthService with ChangeNotifier {
     }
   }
 
+  Future isLoggedIn() async {
+    final token = await _storage.read(key: 'token') ?? "";
+    final Uri uri = Uri.parse('$apiBaseUrl/auth/renew');
+
+    try {
+      final Response resp = await http.get(
+        uri,
+        headers: {'Content-Type': 'application/json', 'x-token': token},
+      );
+
+      if (resp.statusCode == 200) {
+        final LoginResponse loginResponse = loginResponseFromJson(resp.body);
+        user = loginResponse.user;
+        await _saveToken(loginResponse.token);
+
+        return true;
+      } else {
+        logout();
+        return false;
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      logout();
+      return false;
+    }
+  }
+
   Future _saveToken(String token) async {
     return await _storage.write(key: 'token', value: token);
   }
@@ -91,6 +118,8 @@ class AuthService with ChangeNotifier {
         headers: {'Content-Type': 'application/json'},
       );
 
+      print(resp.statusCode);
+
       if (resp.statusCode == 200) {
         final LoginResponse loginResponse = loginResponseFromJson(resp.body);
         user = loginResponse.user;
@@ -103,7 +132,6 @@ class AuthService with ChangeNotifier {
         return jsonDecode(resp.body);
       }
     } catch (e) {
-      print("catching!!!");
       debugPrint(e.toString());
       isAuthenticating = false;
       return {'signup': false, 'msg': e.toString()};

@@ -95,16 +95,21 @@ class __FormState extends State<_Form> {
                         passwordController.text.trim(),
                       );
 
-                      if (isRegisterOk.containsKey(true)) {
+                      if (isRegisterOk.containsValue(true)) {
                         Navigator.pushReplacementNamed(context, 'users');
                       } else {
                         final List errorList = [];
-                        for (var errorKey in isRegisterOk['errors'].keys) {
-                          errorList
-                              .add(isRegisterOk['errors'][errorKey]['msg']);
+                        if (isRegisterOk['errors'] != null) {
+                          for (var errorKey in isRegisterOk['errors'].keys) {
+                            errorList
+                                .add(isRegisterOk['errors'][errorKey]['msg']);
+                          }
+                          showAlert(
+                              context, 'Signup failed', errorList.toString());
+                        } else {
+                          showAlert(context, 'Signup failed',
+                              isRegisterOk["msg"].toString());
                         }
-                        showAlert(
-                            context, 'Signup failed', errorList.toString());
                       }
                     },
               child: const Text("Registrarme"))

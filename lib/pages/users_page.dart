@@ -1,4 +1,6 @@
+import 'package:chat_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../models/user.dart';
 
@@ -19,14 +21,20 @@ class _UsersPageState extends State<UsersPage> {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
+    final AuthService authService = Provider.of<AuthService>(context);
+    final User user = authService.user!;
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Nombre de usuario", style: theme.textTheme.titleMedium),
+          title: Text(user.name, style: theme.textTheme.titleMedium),
           backgroundColor: Colors.white,
           elevation: 0.2,
           leading: IconButton(
-            onPressed: () {},
+            onPressed: () {
+              // TODO disconnect sockets
+              Navigator.pushReplacementNamed(context, 'login');
+              AuthService.deleteToken();
+            },
             icon: Icon(
               Icons.exit_to_app_outlined,
               color: theme.primaryColor,
