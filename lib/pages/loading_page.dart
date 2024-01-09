@@ -9,9 +9,9 @@ import '../services/socket_service.dart';
 class LoadingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: FutureBuilder(
+    return Scaffold(
+      body: SafeArea(
+        child: FutureBuilder(
           future: checkLoginState(context),
           builder: (context, snapshot) {
             return Center(

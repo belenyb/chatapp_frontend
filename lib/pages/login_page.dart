@@ -13,10 +13,10 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-          backgroundColor: const Color(0xffF2F2F2),
-          body: Center(
+    return Scaffold(
+        backgroundColor: const Color(0xffF2F2F2),
+        body: SafeArea(
+          child: Center(
             child: SingleChildScrollView(
               child: SizedBox(
                 height: MediaQuery.of(context).size.height * 0.85,
@@ -33,8 +33,8 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
             ),
-          )),
-    );
+          ),
+        ));
   }
 }
 

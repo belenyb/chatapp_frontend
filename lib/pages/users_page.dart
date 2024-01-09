@@ -1,9 +1,11 @@
 import 'package:chat_app/services/auth_service.dart';
+import 'package:chat_app/services/chat_service.dart';
 import 'package:chat_app/services/socket_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/user.dart';
+import '../services/users_service.dart';
 
 class UsersPage extends StatefulWidget {
   const UsersPage({super.key});
@@ -13,12 +15,15 @@ class UsersPage extends StatefulWidget {
 }
 
 class _UsersPageState extends State<UsersPage> {
-  final List<User> users = [
-    User(isOnline: true, email: 'maria@gmail.com', name: 'Maria', uid: '1'),
-    User(isOnline: false, email: 'pepe@gmail.com', name: 'Esteban', uid: '2'),
-    User(isOnline: false, email: 'pepe@gmail.com', name: 'Roberto', uid: '3'),
-    User(isOnline: false, email: 'pepe@gmail.com', name: 'Belen', uid: '4'),
-  ];
+  List<User> users = [];
+  final UsersService usersService = UsersService();
+
+  @override
+  void initState() {
+    _getUsers();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
@@ -26,57 +31,74 @@ class _UsersPageState extends State<UsersPage> {
     final SocketService socketService = Provider.of<SocketService>(context);
     final User user = authService.user!;
 
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(user.name, style: theme.textTheme.titleMedium),
-          backgroundColor: Colors.white,
-          elevation: 0.2,
-          leading: IconButton(
-            onPressed: () {
-              socketService.disconnect();
-              Navigator.pushReplacementNamed(context, 'login');
-              AuthService.deleteToken();
-            },
-            icon: Icon(
-              Icons.exit_to_app_outlined,
-              color: theme.primaryColor,
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(user.name, style: theme.textTheme.titleMedium),
+        backgroundColor: Colors.white,
+        elevation: 0.2,
+        leading: IconButton(
+          onPressed: () {
+            socketService.disconnect();
+            Navigator.pushReplacementNamed(context, 'login');
+            AuthService.deleteToken();
+          },
+          icon: Icon(
+            Icons.exit_to_app_outlined,
+            color: theme.primaryColor,
           ),
-          actions: [
-            Container(
-              margin: const EdgeInsets.only(right: 10),
-              child: socketService.serverStatus == ServerStatus.Online
-                  ? const Icon(
-                      Icons.check_circle,
-                      color: Colors.blueAccent,
-                    )
-                  : const Icon(
-                      Icons.offline_bolt,
-                      color: Colors.red,
-                    ),
-            )
-          ],
         ),
-        body: Container(
-          margin: const EdgeInsets.only(top: 8),
-          child: Center(
-            child: RefreshIndicator(
-              onRefresh: () async {
-                await Future.delayed(Duration(milliseconds: 2000));
-                print('Refresh ready!');
-              },
-              child: ListView.separated(
-                physics: const AlwaysScrollableScrollPhysics(),
-                itemCount: users.length,
-                separatorBuilder: (_, i) => const Divider(),
-                itemBuilder: (_, i) => _getUserListTile(users[i]),
-              ),
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 10),
+            child: socketService.serverStatus == ServerStatus.Online
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.cell_tower,
+                        color: Color.fromARGB(255, 62, 154, 65),
+                      ),
+                      Text("Online",
+                          style: theme.textTheme.bodySmall!.copyWith(
+                              fontSize: 10,
+                              color: const Color.fromARGB(255, 62, 154, 65))),
+                    ],
+                  )
+                : Column(
+                    children: [
+                      const Icon(
+                        Icons.cell_tower,
+                        color: Color.fromARGB(255, 212, 58, 47),
+                      ),
+                      Text("Offline",
+                          style: theme.textTheme.bodySmall!.copyWith(
+                              fontSize: 10,
+                              color: const Color.fromARGB(255, 212, 58, 47)))
+                    ],
+                  ),
+          )
+        ],
+      ),
+      body: Container(
+        margin: const EdgeInsets.only(top: 8),
+        child: Center(
+          child: RefreshIndicator(
+            onRefresh: _getUsers,
+            child: ListView.separated(
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemCount: users.length,
+              separatorBuilder: (_, i) => const Divider(),
+              itemBuilder: (_, i) => _getUserListTile(users[i]),
             ),
           ),
         ),
       ),
     );
+  }
+
+  Future<void> _getUsers() async {
+    users = await usersService.getUsers();
+    setState(() {});
   }
 
   ListTile _getUserListTile(User user) {
@@ -96,6 +118,12 @@ class _UsersPageState extends State<UsersPage> {
           shape: BoxShape.circle,
         ),
       ),
+      onTap: () {
+        final ChatService chatService =
+            Provider.of<ChatService>(context, listen: false);
+        chatService.userTo = user;
+        Navigator.pushNamed(context, 'chat');
+      },
     );
   }
 }
