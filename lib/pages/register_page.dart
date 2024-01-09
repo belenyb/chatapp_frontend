@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../helpers/show_alert.dart';
 import '../services/auth_service.dart';
+import '../services/socket_service.dart';
 import '../widgets/custom_input.dart';
 import '../widgets/login/labels.dart';
 import '../widgets/login/logo.dart';
@@ -60,6 +61,7 @@ class __FormState extends State<_Form> {
   @override
   Widget build(BuildContext context) {
     final AuthService authService = Provider.of<AuthService>(context);
+    final SocketService socketService = Provider.of<SocketService>(context);
 
     return Container(
       margin: const EdgeInsets.only(top: 36),
@@ -96,6 +98,7 @@ class __FormState extends State<_Form> {
                       );
 
                       if (isRegisterOk.containsValue(true)) {
+                        socketService.connect();
                         Navigator.pushReplacementNamed(context, 'users');
                       } else {
                         final List errorList = [];

@@ -1,4 +1,5 @@
 import 'package:chat_app/helpers/show_alert.dart';
+import 'package:chat_app/services/socket_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -48,6 +49,7 @@ class __FormState extends State<_Form> {
   @override
   Widget build(BuildContext context) {
     final AuthService authService = Provider.of<AuthService>(context);
+    final SocketService socketService = Provider.of<SocketService>(context);
     return Container(
       margin: const EdgeInsets.only(top: 36),
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -77,9 +79,8 @@ class __FormState extends State<_Form> {
                       final isLoginOK =
                           await authService.login(email, password);
 
-                          
                       if (isLoginOK.containsValue(true)) {
-                        // TODO conectar a socket server
+                        socketService.connect();
                         Navigator.pushReplacementNamed(context, 'users');
                       } else {
                         showAlert(

@@ -1,4 +1,5 @@
 import 'package:chat_app/services/auth_service.dart';
+import 'package:chat_app/services/socket_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -22,7 +23,9 @@ class _UsersPageState extends State<UsersPage> {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final AuthService authService = Provider.of<AuthService>(context);
+    final SocketService socketService = Provider.of<SocketService>(context);
     final User user = authService.user!;
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -31,7 +34,7 @@ class _UsersPageState extends State<UsersPage> {
           elevation: 0.2,
           leading: IconButton(
             onPressed: () {
-              // TODO disconnect sockets
+              socketService.disconnect();
               Navigator.pushReplacementNamed(context, 'login');
               AuthService.deleteToken();
             },
@@ -43,10 +46,15 @@ class _UsersPageState extends State<UsersPage> {
           actions: [
             Container(
               margin: const EdgeInsets.only(right: 10),
-              child: const Icon(
-                Icons.check_circle,
-                color: Colors.blueAccent,
-              ),
+              child: socketService.serverStatus == ServerStatus.Online
+                  ? const Icon(
+                      Icons.check_circle,
+                      color: Colors.blueAccent,
+                    )
+                  : const Icon(
+                      Icons.offline_bolt,
+                      color: Colors.red,
+                    ),
             )
           ],
         ),
