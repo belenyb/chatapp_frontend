@@ -12,7 +12,7 @@ import '../models/user.dart';
 
 class AuthService with ChangeNotifier {
   final String apiBaseUrl = Environment.apiUrl;
-  User? user;
+  late User user;
 
   bool _isAuthenticating = false;
   bool get isAuthenticating => _isAuthenticating;

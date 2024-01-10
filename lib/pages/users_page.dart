@@ -29,7 +29,7 @@ class _UsersPageState extends State<UsersPage> {
     final ThemeData theme = Theme.of(context);
     final AuthService authService = Provider.of<AuthService>(context);
     final SocketService socketService = Provider.of<SocketService>(context);
-    final User user = authService.user!;
+    final User user = authService.user;
 
     return Scaffold(
       appBar: AppBar(

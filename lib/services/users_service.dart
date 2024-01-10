@@ -16,7 +16,7 @@ class UsersService {
       });
 
       final UsersListResponse usersResponse = usersListFromJson(resp.body);
-      print(usersResponse.users);
+
       return usersResponse.users;
     } catch (e) {
       debugPrint(e.toString());

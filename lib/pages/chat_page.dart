@@ -1,7 +1,10 @@
+import 'package:chat_app/services/auth_service.dart';
 import 'package:chat_app/services/chat_service.dart';
+import 'package:chat_app/services/socket_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../models/messages_response.dart';
 import '../models/user.dart';
 import '../widgets/chat_message.dart';
 
@@ -17,10 +20,50 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   final FocusNode _focusNode = FocusNode();
   final List<ChatMessage> _messages = [];
   bool _isWriting = false;
+
+  late ChatService chatService;
+  late SocketService socketService;
+  late AuthService authService;
+
+  @override
+  void initState() {
+    super.initState();
+    chatService = Provider.of<ChatService>(context, listen: false);
+    socketService = Provider.of<SocketService>(context, listen: false);
+    authService = Provider.of<AuthService>(context, listen: false);
+
+    socketService.socket.on('personal-message', _personalMessageController);
+    _loadChat(chatService.userTo.uid);
+  }
+
+  void _loadChat(String userToId) async {
+    List<Message> chat = await chatService.getChat(userToId);
+    final chatRecord = chat.map((m) => ChatMessage(
+        text: m.message,
+        uid: m.from,
+        animationController: AnimationController(
+            vsync: this, duration: const Duration(milliseconds: 0))
+          ..forward()));
+    setState(() {
+      _messages.insertAll(0, chatRecord);
+    });
+  }
+
+  void _personalMessageController(dynamic payload) {
+    ChatMessage message = ChatMessage(
+        text: payload['message'],
+        uid: payload['from'],
+        animationController: AnimationController(
+            vsync: this, duration: const Duration(milliseconds: 300)));
+    setState(() {
+      _messages.insert(0, message);
+    });
+    message.animationController.forward();
+  }
+
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final ChatService chatService = Provider.of<ChatService>(context);
     final User userTo = chatService.userTo;
     return Scaffold(
       backgroundColor: Colors.white,
@@ -86,7 +129,6 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                             onChanged: (value) {
                               setState(() {
                                 _isWriting = value.trim().isNotEmpty;
-                                print(_isWriting);
                               });
                             },
                             decoration: const InputDecoration.collapsed(
@@ -128,7 +170,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
 
     final newMessage = ChatMessage(
       text: value,
-      uid: '123',
+      uid: authService.user.uid,
       animationController: AnimationController(
           vsync: this, duration: const Duration(milliseconds: 300)),
     );
@@ -138,14 +180,21 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     setState(() {
       _isWriting = false;
     });
+
+    socketService.emit('personal-message', {
+      'from': authService.user.uid,
+      'to': chatService.userTo.uid,
+      'message': value
+    });
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose > off socket
     for (var message in _messages) {
       message.animationController.dispose();
     }
+
+    socketService.socket.off('personal-message');
     super.dispose();
   }
 }
