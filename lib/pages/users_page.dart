@@ -37,53 +37,53 @@ class _UsersPageState extends State<UsersPage> {
         title: Text(user.name, style: theme.textTheme.titleMedium),
         backgroundColor: Colors.white,
         elevation: 0.2,
-        leading: IconButton(
-          onPressed: () => showAlert(
-            context,
-            'Sure you want to sign out?',
-            'You\'ll need to type user and password credentials to log back in',
-            () {
-              socketService.disconnect();
-              Navigator.pushReplacementNamed(context, 'login');
-              AuthService.deleteToken();
-            },
-            showCancelBtn: true,
-          ),
-          icon: Icon(
-            Icons.exit_to_app_outlined,
-            color: theme.primaryColor,
-          ),
+        leading: Container(
+          margin: const EdgeInsets.only(right: 10),
+          child: socketService.serverStatus == ServerStatus.Online
+              ? Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.cell_tower,
+                      color: Color.fromARGB(255, 62, 154, 65),
+                    ),
+                    Text("Online",
+                        style: theme.textTheme.bodySmall!.copyWith(
+                            fontSize: 10,
+                            color: const Color.fromARGB(255, 62, 154, 65))),
+                  ],
+                )
+              : Column(
+                  children: [
+                    const Icon(
+                      Icons.cell_tower,
+                      color: Color.fromARGB(255, 212, 58, 47),
+                    ),
+                    Text("Offline",
+                        style: theme.textTheme.bodySmall!.copyWith(
+                            fontSize: 10,
+                            color: const Color.fromARGB(255, 212, 58, 47)))
+                  ],
+                ),
         ),
         actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 10),
-            child: socketService.serverStatus == ServerStatus.Online
-                ? Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.cell_tower,
-                        color: Color.fromARGB(255, 62, 154, 65),
-                      ),
-                      Text("Online",
-                          style: theme.textTheme.bodySmall!.copyWith(
-                              fontSize: 10,
-                              color: const Color.fromARGB(255, 62, 154, 65))),
-                    ],
-                  )
-                : Column(
-                    children: [
-                      const Icon(
-                        Icons.cell_tower,
-                        color: Color.fromARGB(255, 212, 58, 47),
-                      ),
-                      Text("Offline",
-                          style: theme.textTheme.bodySmall!.copyWith(
-                              fontSize: 10,
-                              color: const Color.fromARGB(255, 212, 58, 47)))
-                    ],
-                  ),
-          )
+          IconButton(
+            onPressed: () => showAlert(
+              context,
+              'Sure you want to sign out?',
+              'You\'ll need to type user and password credentials to log back in',
+              () {
+                socketService.disconnect();
+                Navigator.pushReplacementNamed(context, 'login');
+                AuthService.deleteToken();
+              },
+              showCancelBtn: true,
+            ),
+            icon: Icon(
+              Icons.exit_to_app_outlined,
+              color: theme.primaryColor,
+            ),
+          ),
         ],
       ),
       body: Container(
