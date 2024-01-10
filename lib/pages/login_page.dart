@@ -84,7 +84,7 @@ class __FormState extends State<_Form> {
                         Navigator.pushReplacementNamed(context, 'users');
                       } else {
                         showAlert(
-                            context, 'Login failed', isLoginOK["message"]);
+                            context, 'Login failed', isLoginOK["message"], () => Navigator.pop(context));
                       }
                     },
               child: const Text("Iniciar sesión"))

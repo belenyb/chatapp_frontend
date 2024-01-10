@@ -108,10 +108,16 @@ class __FormState extends State<_Form> {
                                 .add(isRegisterOk['errors'][errorKey]['msg']);
                           }
                           showAlert(
-                              context, 'Signup failed', errorList.toString());
+                              context,
+                              'Signup failed',
+                              errorList.toString(),
+                              () => Navigator.pop(context));
                         } else {
-                          showAlert(context, 'Signup failed',
-                              isRegisterOk["msg"].toString());
+                          showAlert(
+                              context,
+                              'Signup failed',
+                              isRegisterOk["msg"].toString(),
+                              () => Navigator.pop(context));
                         }
                       }
                     },

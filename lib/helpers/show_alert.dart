@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-showAlert(BuildContext context, String title, String subtitle) {
+showAlert(BuildContext context, String title, String subtitle, void Function()? action, {bool? showCancelBtn = false}) {
   if (Platform.isAndroid) {
     showDialog(
       context: context,
@@ -12,9 +12,10 @@ showAlert(BuildContext context, String title, String subtitle) {
         content: Text(subtitle),
         actions: [
           MaterialButton(
-            child: const Text("OK"),
-            onPressed: () => Navigator.pop(context),
+            onPressed: action,
+            child: const Text("Accept"),
           ),
+          if(showCancelBtn == true) MaterialButton(onPressed: () => Navigator.pop(context), child: const Text("Accept"))
         ],
       ),
     );
@@ -27,10 +28,10 @@ showAlert(BuildContext context, String title, String subtitle) {
       content: Text(subtitle),
       actions: [
         CupertinoDialogAction(
-          isDefaultAction: true,
-          child: const Text("OK"),
-          onPressed: () => Navigator.pop(context),
+          onPressed: action,
+          child: const Text("Accept"),
         ),
+        if(showCancelBtn == true) CupertinoDialogAction(isDestructiveAction: true, onPressed: () => Navigator.pop(context), child: const Text("Cancel"))
       ],
     )
   );

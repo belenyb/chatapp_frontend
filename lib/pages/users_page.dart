@@ -1,3 +1,4 @@
+import 'package:chat_app/helpers/show_alert.dart';
 import 'package:chat_app/services/auth_service.dart';
 import 'package:chat_app/services/chat_service.dart';
 import 'package:chat_app/services/socket_service.dart';
@@ -37,11 +38,17 @@ class _UsersPageState extends State<UsersPage> {
         backgroundColor: Colors.white,
         elevation: 0.2,
         leading: IconButton(
-          onPressed: () {
-            socketService.disconnect();
-            Navigator.pushReplacementNamed(context, 'login');
-            AuthService.deleteToken();
-          },
+          onPressed: () => showAlert(
+            context,
+            'Sure you want to sign out?',
+            'You\'ll need to type user and password credentials to log back in',
+            () {
+              socketService.disconnect();
+              Navigator.pushReplacementNamed(context, 'login');
+              AuthService.deleteToken();
+            },
+            showCancelBtn: true,
+          ),
           icon: Icon(
             Icons.exit_to_app_outlined,
             color: theme.primaryColor,
