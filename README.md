@@ -3,7 +3,7 @@
 
 This Flutter chat app is a real-time messaging application that allows users to engage in seamless conversations. The app is built using Flutter for the front end, and it communicates with a Node.js backend server that utilizes Express, MongoDB for data storage, and sockets for real-time communication.
 
-<img src="assets/docs/chatapp.gif" width=200 height=auto alt="Login screen" />
+<img src="assets/docs/chatapp.gif" width=400 height=auto alt="Login screen" />
 
 ## Frontend Features
 To check out this repo, click [here](https://github.com/belenyb/chatapp_frontend.git).
