@@ -19,6 +19,7 @@ This widget includes two main actions: a signout button and an online status ico
 
 ### Users Page
 A user list page displays all users along with their online status. Users can easily identify who is online and initiate chats.
+
 <img src="assets/docs/users.png" width=200 height=auto alt="Users screen" />
 
 ### Chat Page
