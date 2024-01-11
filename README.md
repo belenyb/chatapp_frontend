@@ -22,6 +22,7 @@ A user list page displays all users along with their online status. Users can ea
 
 ### Chat Page
 The chat page provides a user-friendly interface for users to engage in real-time conversations. The chat history between two users is displayed, and new messages are instantly updated.
+
 <img src="assets/docs/chat.png" width=200 height=auto alt="Chat screen" />
 
 ## Backend features
