@@ -9,8 +9,9 @@ This Flutter chat app is a real-time messaging application that allows users to 
 To check out this repo, click [here](https://github.com/belenyb/chatapp_frontend.git).
 ### Login and Signup Pages
 The app includes dedicated pages for user authentication, allowing users to log in or sign up to access the chat functionality. 
-<img src="assets/docs/login.png" width=200 height=auto alt="Login screen" />
-<img src="assets/docs/signup.png" width=200 height=auto alt="Signup screen" />
+
+<img src="assets/docs/login.png" width=100 height=auto alt="Login screen" />
+<img src="assets/docs/signup.png" width=100 height=auto alt="Signup screen" />
 
 
 ### App bar
