@@ -26,6 +26,19 @@ The chat page provides a user-friendly interface for users to engage in real-tim
 
 <img src="assets/docs/chat.png" width=200 height=auto alt="Chat screen" />
 
+### Frontend dependencies
+#### provider
+State management is handled efficiently using the Provider package, ensuring a seamless and reactive user interface.
+
+#### http
+The HTTP package is used to make secure and reliable network requests between the Flutter app and the Node.js backend server.
+
+#### flutter_secure_storage
+User authentication details are securely stored using the flutter_secure_storage package, ensuring the safety of sensitive information.
+
+#### socket_io_client
+Real-time communication is achieved using the Socket.io client package, enabling instant message updates and notifications in the chat.
+
 ## Backend features
 To check out this repo, click [here](https://github.com/belenyb/chatapp_backend.git).
 ### Real-time Messaging
